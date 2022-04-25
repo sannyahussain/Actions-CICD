@@ -1,0 +1,49 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: develop-ms
+  labels:
+    io.kompose.service: asset-adv-web
+  name: asset-adv-web
+spec:
+  ports:
+    - name: "8003"
+      port: 8003
+      targetPort: 8003
+  selector:
+    io.kompose.service: asset-adv-web
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: develop-ms
+  labels:
+    io.kompose.service: asset-adv-web
+  name: asset-adv-web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: asset-adv-web
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        io.kompose.service: asset-adv-web
+    spec:
+      containers:
+        - command: [bash]
+          args:
+          - -c
+          - |
+            python /code/manage.py migrate
+            python /code/manage.py data_migrate
+            python /code/manage.py runserver 0.0.0.0:8003
+          image: acrvfqhub.azurecr.io/vfq-assets-be-advance:v1
+          imagePullPolicy: Always
+          name: asset-adv-web
+          ports:
+            - containerPort: 8003
+      restartPolicy: Always
