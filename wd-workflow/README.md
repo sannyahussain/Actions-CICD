@@ -1,4 +1,5 @@
-GitHub Actions Workflow: TEST
+GitHub Actions Workflow
+
 This workflow, named TEST, is designed to build and push a Docker image to the Azure Container Registry (ACR). It includes validation for user permissions to ensure only authorized users can execute it.
 
 Workflow Triggers
