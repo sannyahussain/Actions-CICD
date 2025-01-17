@@ -1,9 +1,10 @@
-GitHub Actions Workflow
+# GitHub Actions Workflow
 
 This workflow, named TEST, is designed to build and push a Docker image to the Azure Container Registry (ACR). It includes validation for user permissions to ensure only authorized users can execute it.
 
-Workflow Triggers
-Manual Trigger: The workflow can only be triggered manually using the workflow_dispatch event.
+## Workflow Triggers
+Manual Trigger: 
+The workflow can only be triggered manually using the workflow_dispatch event.
 Jobs and Steps
 Job: build-and-push
 Runs On: A self-hosted runner.
@@ -27,7 +28,7 @@ Push Docker Image:
 
 Pushes the Docker image to the Azure Container Registry (ACR).
 
-Usage:
+## Usage:
 Define a repository variable ALLOWED_USERS with a comma-separated list of authorized GitHub usernames.
 Manually trigger the workflow from the Actions tab in your GitHub repository.
 Ensure the self-hosted runner has the necessary permissions to build and push Docker images.
