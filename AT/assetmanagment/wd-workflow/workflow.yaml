@@ -1,0 +1,39 @@
+name: TEST
+
+on:
+  workflow_dispatch: # Trigger manually
+
+jobs:
+  build-and-push:
+    runs-on: self-hosted  # Run on self-hosted runner
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Validate User Permissions
+        run: |
+          # Access the allowed users from the repository variable
+          ALLOWED_USERS="${{ vars.ALLOWED_USERS }}"
+
+          if [[ ! ",$ALLOWED_USERS," =~ ",$GITHUB_ACTOR," ]]; then
+            echo "User $GITHUB_ACTOR is not authorized to run this workflow."
+            exit 1  # Stop the workflow if the current actor is not allowed
+          else
+            if [[ "$GITHUB_TRIGGERING_ACTOR" != "" && ! ",$ALLOWED_USERS," =~ ",$GITHUB_TRIGGERING_ACTOR," ]]; then
+              echo "User $GITHUB_TRIGGERING_ACTOR is not authorized to re-run this workflow."
+              exit 1  # Stop the workflow if the re-run initiator is not allowed
+            fi
+          fi
+
+      - name: Get Git commit ID
+        id: git_commit
+        run: echo "COMMIT_ID=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+
+      - name: Build Docker image
+        run: |
+          docker build -t ostacrdev.azurecr.io/wdfe:${{ env.COMMIT_ID }} .
+
+      - name: Push Docker image
+        run: |
+          docker push ostacrdev.azurecr.io/wdfe:${{ env.COMMIT_ID }}
